@@ -1,5 +1,5 @@
 /* eslint-disable import/extensions */
-import { Title, Text, Stack, Group, Center, Anchor, Card } from '@mantine/core';
+import { Title, Text, Stack, Group, Anchor, Container, rem, Divider } from '@mantine/core';
 import { useProductsRetriever } from '@/store/hooks.mjs';
 import { CategoryButton } from '@/components/products/atoms/CategoryButton';
 import { Protected } from '@/core/Protected';
@@ -19,7 +19,7 @@ const Stats = () => {
   return (
     <Stack mt={40}>
       <Text>Public Stats</Text>
-      <Text fz={28} maw={580}>
+      <Text fz={28}>
         Total{' '}
         <Anchor fz={28} href="/products">
           products
@@ -29,7 +29,7 @@ const Stats = () => {
           {products.filter((p) => p.status === 'Live').length}
         </span>
       </Text>
-      <Text fz={28} maw={580} mt="md">
+      <Text fz={28}>
         In <span style={{ color: 'orange' }}>{categories.length}</span> categories:{' '}
       </Text>
       <Group>
@@ -41,24 +41,26 @@ const Stats = () => {
   );
 };
 
-const DraftStats = () => {
+const AdminStats = () => {
   const [products] = useProductsRetriever();
   const draftProducts = products.filter((p) => p.status === 'Draft');
 
   return (
-    <Card>
-      <Text>Admin Stats</Text>
+    <Stack>
+      <Text fs="italic" fw="bold" fz={20}>
+        Admin Stats
+      </Text>
       <Group>
         <Anchor fz={28}>Draft</Anchor>
-        <Text fz={28}> products count: {draftProducts.length.toString()}</Text>
+        <Text fz={28}> products: {draftProducts.length.toString()}</Text>
       </Group>
-    </Card>
+    </Stack>
   );
 };
 
 export const HomePage = () => (
-  <Center p={40}>
-    <Stack>
+  <Container size="md" pt={rem(40)}>
+    <Stack justify="center">
       <Welcome />
       <Protected.RoleFragment
         Guest={
@@ -70,10 +72,11 @@ export const HomePage = () => (
         Admin={
           <Stack gap={40}>
             <Stats />
-            <DraftStats />
+            <Divider />
+            <AdminStats />
           </Stack>
         }
       />
     </Stack>
-  </Center>
+  </Container>
 );
