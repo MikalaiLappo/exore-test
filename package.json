@@ -23,6 +23,7 @@
     "@mantine/form": "^7.2.2",
     "@mantine/hooks": "7.2.2",
     "@reduxjs/toolkit": "^1.9.7",
+    "@tabler/icons-react": "^2.42.0",
     "axios": "^1.6.2",
     "classnames": "^2.3.2",
     "react": "^18.2.0",
