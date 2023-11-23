@@ -5,31 +5,37 @@ import { ViewProductPage } from '@/pages/products/ViewProduct.page';
 import { AddProductPage } from '@/pages/products/AddProduct.page';
 import { SignUpPage } from '@/pages/auth/SignUp.page';
 import { SignInPage } from '@/pages/auth/SignIn.page';
+import { RootLayout } from './root.layout';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    Component: HomePage,
-  },
-  {
-    path: '/products/*',
+    element: <RootLayout />,
     children: [
-      { index: true, Component: ProductsPage },
       {
-        path: ':productId',
-        Component: ViewProductPage,
+        path: '/',
+        Component: HomePage,
       },
       {
-        path: 'add',
-        Component: AddProductPage,
+        path: '/products/*',
+        children: [
+          { index: true, Component: ProductsPage },
+          {
+            path: ':productId',
+            Component: ViewProductPage,
+          },
+          {
+            path: 'add',
+            Component: AddProductPage,
+          },
+        ],
       },
-    ],
-  },
-  {
-    path: '/auth/*',
-    children: [
-      { path: 'sign-up', Component: SignUpPage },
-      { path: 'sign-in', Component: SignInPage },
+      {
+        path: '/auth/*',
+        children: [
+          { path: 'sign-up', Component: SignUpPage },
+          { path: 'sign-in', Component: SignInPage },
+        ],
+      },
     ],
   },
 ]);

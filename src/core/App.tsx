@@ -5,16 +5,13 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Router } from './Router';
 import { theme } from './theme';
 import { persistor, store } from '../store';
-import { RootLayout } from './root.layout';
 
 export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={<>Loading</>} persistor={persistor}>
         <MantineProvider theme={theme}>
-          <RootLayout>
-            <Router />
-          </RootLayout>
+          <Router />
         </MantineProvider>
       </PersistGate>
     </Provider>

@@ -3,6 +3,7 @@ import { AppShell, Burger, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ReactNode } from 'react';
 import cn from 'classnames';
+import { Outlet } from 'react-router-dom';
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import styles from './rootLayout.module.css';
 import { AccountMenu } from '@/components/auth/AccountMenu';
@@ -31,7 +32,7 @@ const DesktopHeaderContent = ({ children }: { children?: ReactNode }) => (
   </Group>
 );
 
-const RootLayout = ({ children }: { children: ReactNode }) => {
+const RootLayout = () => {
   const [opened, { toggle }] = useDisclosure();
 
   return (
@@ -45,7 +46,9 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         <AppShell.Navbar className={styles.header__navbar}>Navbar</AppShell.Navbar>
       </AppShell.Header>
 
-      <AppShell.Main h="100%">{children}</AppShell.Main>
+      <AppShell.Main h="100%">
+        <Outlet />
+      </AppShell.Main>
     </AppShell>
   );
 };
