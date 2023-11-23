@@ -24,5 +24,8 @@ export type Product = ProductData & {
   source: ProductSource;
   createdAt: number;
   updatedAt: number;
+  // Mock API doesn't have any operations, flag is for `API` products specifically
+  // `Local` products may be erased completely
+  isDeleted: boolean;
 };
 export type NewProduct = Omit<Product, 'id' | 'rating'>;

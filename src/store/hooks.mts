@@ -63,17 +63,15 @@ export const useLogOut = () => {
 };
 
 export const useProductsRetriever = () => {
-  const { products, productFilters } = useAppSelector((state) => state.productsStore);
+  const { products } = useAppSelector((state) => state.productsStore);
   const dispatch = useAppDispatch();
 
   const loadAPIProducts = async (n?: number) => {
-    if (productFilters.status === 'Draft') return;
     /// if (n === undefined && products.length) return;
     dispatch(fetchProducts(n ?? 8));
   };
 
   useEffect(() => {
-    if (productFilters.status === 'Draft') return;
     // if (products.length) return;
     loadAPIProducts();
   }, []);

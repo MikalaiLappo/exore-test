@@ -42,6 +42,7 @@ const defaultProductData = {
   status: 'Draft',
   createdAt: now,
   updatedAt: now,
+  isDeleted: false,
 } as const;
 
 type ProductFormProps = {

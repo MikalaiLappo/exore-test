@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { Product, ProductSource, ProductStatus } from '@/types/products.js';
+import { Product } from '@/types/products.js';
 import ProductsService from '@/services/products.service';
 import { ProcessStatus } from '@/types/shared.js';
 
@@ -17,31 +17,20 @@ export const fetchProducts = createAsyncThunk(
       source: 'API',
       createdAt: now,
       updatedAt: now,
+      isDeleted: false,
     }));
     return apiProducts;
   }
 );
 
-type ProductsSourceFilter = ProductSource | 'ALL';
-type ProductsStatusFilter = ProductStatus | 'ALL';
-type ProductFilters = {
-  source: ProductsSourceFilter;
-  status: ProductsStatusFilter;
-};
-
 type ProductsState = {
   products: Product[];
   productsFetchStatus: ProcessStatus;
-  productFilters: ProductFilters;
 };
 
 const initialState: ProductsState = {
   products: [],
   productsFetchStatus: 'idle',
-  productFilters: {
-    source: 'ALL',
-    status: 'ALL',
-  },
 };
 
 export const productsSlice = createSlice({
@@ -53,9 +42,6 @@ export const productsSlice = createSlice({
     },
     addProduct: (state, action: PayloadAction<Product>) => {
       state.products.push(action.payload);
-    },
-    setProductsSourceFilter: (state, action: PayloadAction<ProductFilters>) => {
-      state.productFilters = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -76,10 +62,6 @@ export const productsSlice = createSlice({
   },
 });
 
-export const {
-  deleteProduct,
-  addProduct,
-  setProductsSourceFilter: toggleProductsSource,
-} = productsSlice.actions;
+export const { deleteProduct, addProduct } = productsSlice.actions;
 
 export default productsSlice.reducer;
