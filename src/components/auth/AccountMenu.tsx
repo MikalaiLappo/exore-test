@@ -2,6 +2,7 @@
 import { Anchor, Button, Menu, rem } from '@mantine/core';
 import {
   IconFilePlus,
+  IconHome,
   IconLogin,
   IconLogout,
   IconNotes,
@@ -61,6 +62,11 @@ const CustomerMenu = ({ user, children }: { user: User; children?: ReactNode }) 
         <Menu.Divider />
 
         <Menu.Label>Market</Menu.Label>
+        <Anchor underline="never" href="/">
+          <Menu.Item leftSection={<IconHome style={{ width: rem(20), height: rem(20) }} />}>
+            Home
+          </Menu.Item>
+        </Anchor>
         <Anchor underline="never" href="/products">
           <Menu.Item leftSection={<IconShoppingBag style={{ width: rem(20), height: rem(20) }} />}>
             Products
