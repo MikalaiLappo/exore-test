@@ -1,10 +1,11 @@
 /* eslint-disable import/extensions */
-import { Anchor, AppShell, Burger, Group } from '@mantine/core';
+import { AppShell, Burger, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ReactNode } from 'react';
 import cn from 'classnames';
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
-import layoutStyles from './layout.module.css';
+import styles from './rootLayout.module.css';
+import { AccountMenu } from '@/components/auth/AccountMenu';
 
 const MobileHeaderContent = ({
   opened,
@@ -15,10 +16,7 @@ const MobileHeaderContent = ({
   toggle: () => void;
   children?: ReactNode;
 }) => (
-  <Group
-    className={cn(layoutStyles.header__content, layoutStyles.header__content_mobile)}
-    hiddenFrom="sm"
-  >
+  <Group className={cn(styles.header__content, styles.header__content_mobile)} hiddenFrom="sm">
     <Burger opened={opened} onClick={toggle} size="sm" />
     {children}
     <ColorSchemeToggle />
@@ -26,11 +24,9 @@ const MobileHeaderContent = ({
 );
 
 const DesktopHeaderContent = ({ children }: { children?: ReactNode }) => (
-  <Group className={cn(layoutStyles.header__content, layoutStyles.header__content_desktop)}>
-    <Group>
-      <Anchor> Home </Anchor>
-    </Group>
+  <Group className={cn(styles.header__content, styles.header__content_desktop)}>
     {children}
+    <AccountMenu />
     <ColorSchemeToggle />
   </Group>
 );
@@ -43,13 +39,13 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
       header={{ height: 60 }}
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened, desktop: true } }}
     >
-      <AppShell.Header className={layoutStyles.header}>
+      <AppShell.Header className={styles.header}>
         <MobileHeaderContent opened={opened} toggle={toggle} />
         <DesktopHeaderContent />
-        <AppShell.Navbar className={layoutStyles.header__navbar}>Navbar</AppShell.Navbar>
+        <AppShell.Navbar className={styles.header__navbar}>Navbar</AppShell.Navbar>
       </AppShell.Header>
 
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main h="100%">{children}</AppShell.Main>
     </AppShell>
   );
 };

@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 import axios from 'axios';
-import { ProductData } from '@/types/products';
+import { ProductData } from '@/types/products.js';
 
 const BASE_URL = 'https://fakestoreapi.com/';
 const makeUrl = (s: string) => `${BASE_URL}${s}`;

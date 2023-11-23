@@ -5,7 +5,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { Router } from './Router';
 import { theme } from './theme';
 import { persistor, store } from '../store';
-import { RootLayout } from './layout';
+import { RootLayout } from './root.layout';
 
 export default function App() {
   return (

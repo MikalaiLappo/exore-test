@@ -7,11 +7,11 @@
   width: 100%;
   max-width: 1280px;
   justify-content: space-between;
-  padding: 0 8rem 0 8rem;
 }
 
 .header__content_mobile {
   display: flex;
+  padding: 0 4rem 0 4rem;
 }
 
 @media (min-width: 769px) {
@@ -27,14 +27,10 @@
 @media (min-width: 769px) {
   .header__content_desktop {
     display: flex;
+    padding: 0 8rem 0 8rem;
   }
 }
 
 .header__navbar {
   z-index: 99999999999999999;
-}
-
-.main {
-  display: flex;
-  height: 100%;
 }
