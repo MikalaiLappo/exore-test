@@ -5,7 +5,14 @@ import type { TypedUseSelectorHook } from 'react-redux';
 import { useEffect } from 'react';
 import type { RootState, AppDispatch } from './index';
 import { fetchProducts } from './slices/productsSlice';
-import { signIn, signOut, signUp, validateToken } from './slices/usersSlice';
+import {
+  initSignIn,
+  initSignUp,
+  signIn,
+  signOut,
+  signUp,
+  validateToken,
+} from './slices/usersSlice';
 import { NewUserData } from '@/types/users';
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
@@ -27,16 +34,26 @@ export const useSession = () => {
 
 export const useSignUp = () => {
   const dispatch = useAppDispatch();
+  const { signUpError, signUpStatus } = useAppSelector((state) => state.usersStore);
+  useEffect(() => {
+    dispatch(initSignUp());
+  }, []);
+
   const trySignUp = (userData: NewUserData) => dispatch(signUp(userData));
 
-  return trySignUp;
+  return [trySignUp, { error: signUpError, status: signUpStatus }] as const;
 };
 
 export const useSignIn = () => {
   const dispatch = useAppDispatch();
+  const { signInError, signInStatus } = useAppSelector((state) => state.usersStore);
+  useEffect(() => {
+    dispatch(initSignIn());
+  }, []);
+
   const trySignIn = (logpass: { login: string; password: string }) => dispatch(signIn(logpass));
 
-  return trySignIn;
+  return [trySignIn, { error: signInError, status: signInStatus }] as const;
 };
 
 export const useLogOut = () => {

@@ -2,9 +2,10 @@
 import { Anchor, Button, Card, Group, SegmentedControl, Stack, TextInput } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { z } from 'zod';
+import { useEffect } from 'react';
 import { NewUserData, UserRole } from '@/types/users.js';
-import { useAppSelector, useSignUp } from '@/store/hooks.mjs';
 import { AuthLayout } from './auth.layout';
+import { useSignUp } from '@/store/hooks.mjs';
 
 const newUserValidator = z.object({
   login: z.string().min(4, { message: 'Login should have at least 2 letters' }),
@@ -24,17 +25,18 @@ export const SignUpPage = () => {
     initialValues: defaultProductData,
   });
 
-  const { users } = useAppSelector((state) => state.usersStore);
-  console.log(users);
-  const trySignUp = useSignUp();
+  const [trySignUp, { error, status }] = useSignUp();
+
+  useEffect(() => {
+    if (error !== null && !('unknown' in error)) {
+      form.setErrors(error);
+    }
+  }, [error]);
 
   return (
     <AuthLayout>
       <Card style={{ maxWidth: '32rem' }} w="100%">
-        <form
-          onChange={() => console.log(form.values)}
-          onSubmit={form.onSubmit((values) => trySignUp(values))}
-        >
+        <form onSubmit={form.onSubmit((values) => trySignUp(values))}>
           <Stack>
             <TextInput
               label="Login"
@@ -60,7 +62,7 @@ export const SignUpPage = () => {
               onChange={(val) => form.setFieldValue('role', val as UserRole)}
             />
             <Group justify="space-between" px={16}>
-              <Button type="submit" color="indigo" mt="md">
+              <Button disabled={status === 'pending'} type="submit" color="indigo" mt="md">
                 Sign Up
               </Button>
               <Anchor href="/auth/sign-in">
@@ -69,6 +71,7 @@ export const SignUpPage = () => {
                 </Button>
               </Anchor>
             </Group>
+            {error && 'unknown' in error ? error.unknown : null}
           </Stack>
         </form>
       </Card>

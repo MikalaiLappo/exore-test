@@ -1,17 +1,16 @@
 /* eslint-disable import/extensions */
-import { Anchor, Button, Card, Group, Stack, TextInput } from '@mantine/core';
+import { Anchor, Button, Card, Group, Stack, TextInput, Text } from '@mantine/core';
 import { useForm, zodResolver } from '@mantine/form';
 import { z } from 'zod';
+import { useEffect } from 'react';
 import { AuthLayout } from './auth.layout';
-import { User } from '@/types/users';
+import { SignInUserData } from '@/types/users';
 import { useSignIn } from '@/store/hooks.mjs';
 
 const signInValidator = z.object({
   login: z.string().min(4, { message: 'Login should have at least 4 letters' }),
   password: z.string().min(8, { message: 'Password should have at least 8 characters' }),
 });
-
-type SignInUserData = Pick<User, 'login' | 'password'>;
 
 const defaultSignInData: SignInUserData = {
   login: '',
@@ -24,7 +23,13 @@ export const SignInPage = () => {
     initialValues: defaultSignInData,
   });
 
-  const trySignIn = useSignIn();
+  const [trySignIn, { error, status }] = useSignIn();
+
+  useEffect(() => {
+    if (error !== null && !('unknown' in error)) {
+      form.setErrors(error);
+    }
+  }, [error]);
 
   return (
     <AuthLayout>
@@ -40,7 +45,7 @@ export const SignInPage = () => {
               {...form.getInputProps('password')}
             />
             <Group justify="space-between" px={16}>
-              <Button type="submit" color="indigo" mt="md">
+              <Button type="submit" disabled={status === 'pending'} color="indigo" mt="md">
                 Sign In
               </Button>
               <Anchor href="/auth/sign-up">
@@ -49,6 +54,7 @@ export const SignInPage = () => {
                 </Button>
               </Anchor>
             </Group>
+            <Text c="red">{error !== null && 'unknown' in error ? error.unknown : null}</Text>
           </Stack>
         </form>
       </Card>
