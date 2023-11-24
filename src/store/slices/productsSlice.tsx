@@ -3,8 +3,7 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { Product, ProductData, ProductId } from '@/types/products.js';
+import { Product, ProductData, ProductId, ProductUpdateData } from '@/types/products.js';
 import ProductsService from '@/services/products.service';
 import { ProcessStatus } from '@/types/shared.js';
 
@@ -14,8 +13,16 @@ export const fetchProducts = createAsyncThunk<ProductData[], number>(
 );
 
 export const deleteProduct = createAsyncThunk('products/deleteProduct', async (id: ProductId) => {
-  await ProductsService.fetchProducts(id);
+  await ProductsService.removeProduct(id);
   return id;
+});
+
+export const updateProduct = createAsyncThunk<
+  Product,
+  { id: ProductId; productData: ProductUpdateData }
+>('products/updateProduct', async ({ id, productData }) => {
+  const resp = await ProductsService.updateProduct(id, productData);
+  return { ...productData, ...resp, id };
 });
 
 type ProductsState = {
@@ -52,12 +59,13 @@ export const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
-    addProduct: (state, action: PayloadAction<Product>) => {
-      state.products.push(action.payload);
-    },
     initDelete: (state) => {
       state.productDeleteError = null;
       state.productDeleteStatus = 'idle';
+    },
+    initEdit: (state) => {
+      state.productEditError = null;
+      state.productEditStatus = 'idle';
     },
   },
   extraReducers: (builder) => {
@@ -99,7 +107,11 @@ export const productsSlice = createSlice({
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const theProduct = state.products.find((p) => p.id === action.payload);
-        if (!theProduct) return;
+        if (!theProduct) {
+          state.productDeleteStatus = 'failed';
+          state.productDeleteError = 'Product not found';
+          return;
+        }
         if (theProduct.source === 'Local') {
           state.products = state.products.filter((p) => p.id !== action.payload);
         } else {
@@ -118,10 +130,33 @@ export const productsSlice = createSlice({
       .addCase(deleteProduct.rejected, (state, action) => {
         state.productDeleteStatus = 'failed';
         state.productDeleteError = action.error.message ?? 'Unknown delete error';
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        const theProduct = state.products.find((p) => p.id === action.payload.id);
+        if (!theProduct) {
+          state.productEditStatus = 'failed';
+          state.productEditError = 'Product not found';
+          return;
+        }
+
+        state.products = state.products.map((p) =>
+          p.id !== action.payload.id ? p : { ...p, ...action.payload, updatedAt: Date.now() }
+        );
+
+        state.productEditStatus = 'succeeded';
+        state.productEditError = null;
+      })
+      .addCase(updateProduct.pending, (state) => {
+        state.productEditStatus = 'pending';
+        state.productEditError = null;
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
+        state.productEditStatus = 'failed';
+        state.productEditError = action.error.message ?? 'Unknown delete error';
       });
   },
 });
 
-export const { addProduct, initDelete } = productsSlice.actions;
+export const { initEdit, initDelete } = productsSlice.actions;
 
 export default productsSlice.reducer;

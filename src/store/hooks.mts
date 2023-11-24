@@ -4,7 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useEffect } from 'react';
 import type { RootState, AppDispatch } from './index';
-import { deleteProduct, fetchProducts, initDelete } from './slices/productsSlice';
+import {
+  deleteProduct,
+  fetchProducts,
+  initDelete,
+  initEdit,
+  updateProduct,
+} from './slices/productsSlice';
 import {
   initSignIn,
   initSignUp,
@@ -14,7 +20,7 @@ import {
   validateToken,
 } from './slices/usersSlice';
 import { NewUserData } from '@/types/users';
-import { ProductId } from '@/types/products';
+import { ProductId, ProductUpdateData } from '@/types/products';
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -92,4 +98,17 @@ export const useProductRemover = (id: ProductId) => {
   const remove = async () => dispatch(deleteProduct(id));
 
   return [remove, { error: productDeleteError, status: productDeleteStatus }] as const;
+};
+
+export const useProductUpdater = (id: ProductId) => {
+  const { productEditStatus, productEditError } = useAppSelector((state) => state.productsStore);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(initEdit());
+  }, []);
+
+  const update = async (productData: ProductUpdateData) =>
+    dispatch(updateProduct({ id, productData }));
+
+  return [update, { error: productEditError, status: productEditStatus }] as const;
 };

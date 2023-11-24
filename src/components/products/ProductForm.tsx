@@ -1,5 +1,6 @@
 /* eslint-disable import/extensions */
 import {
+  Text,
   Stack,
   Flex,
   Card,
@@ -17,6 +18,7 @@ import { useForm, zodResolver } from '@mantine/form';
 import { ProductFullCard } from './ProductFullCard';
 import { ProductCard } from './ProductCard';
 import { Product, ProductStatus } from '@/types/products';
+import { ProcessStatus } from '@/types/shared';
 
 const newProductValidator = z.object({
   title: z.string().min(2, { message: 'Name should have at least 2 letters' }),
@@ -29,19 +31,20 @@ type ProductFormProps = {
   product: Product;
   onSubmit: (p: Product) => void;
   buttonText: string;
+  status: ProcessStatus;
+  error: string | null;
 };
 
-export const ProductForm = ({ buttonText, onSubmit, product }: ProductFormProps) => {
+export const ProductForm = ({ buttonText, onSubmit, product, status, error }: ProductFormProps) => {
   const form = useForm<Product>({
     validate: zodResolver(newProductValidator),
-    initialValues: product,
+    initialValues: { ...product },
   });
 
   // Edge-case for complete uncrolled input deletion
   const safePrice: number = form.getInputProps('price').value || 0;
   const previewData = { ...product, ...form.values, ...{ price: safePrice } };
 
-  console.log(previewData);
   return (
     <Container size="xl" pt={32}>
       <Stack>
@@ -95,14 +98,27 @@ export const ProductForm = ({ buttonText, onSubmit, product }: ProductFormProps)
                 value={form.getInputProps('status').value as ProductStatus}
                 onChange={(val) => form.setFieldValue('status', val as ProductStatus)}
               />
-              <Button
-                variant="gradient"
-                gradient={{ from: 'green', to: 'blue' }}
-                type="submit"
-                mt="md"
-              >
-                {buttonText}
-              </Button>
+              <Group justify="space-between">
+                <Button
+                  disabled={status === 'pending'}
+                  variant="gradient"
+                  gradient={{ from: 'green', to: 'blue' }}
+                  type="submit"
+                  mt="md"
+                >
+                  {buttonText}
+                </Button>
+                {status !== 'idle' && status !== 'pending' ? (
+                  <Text fw="bold" c="lime" ta="center">
+                    {status}
+                  </Text>
+                ) : null}
+                {error ? (
+                  <Text fw="bold" c="red" ta="center">
+                    {error}
+                  </Text>
+                ) : null}
+              </Group>
             </form>
           </Card>
           <Group>

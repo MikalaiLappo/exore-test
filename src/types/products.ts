@@ -30,3 +30,4 @@ export type Product = ProductData & {
   isDeleted: boolean;
 };
 export type NewProduct = Omit<Product, 'id' | 'rating'>;
+export type ProductUpdateData = Omit<Product, 'id'>;
