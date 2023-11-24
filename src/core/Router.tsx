@@ -1,4 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
+import { QueryParamProvider } from 'use-query-params';
 import { HomePage } from '../pages/Home.page';
 import { ProductsPage } from '@/pages/products/Products.page';
 import { ViewProductPage } from '@/pages/products/ViewProduct.page';
@@ -9,7 +11,11 @@ import { RootLayout } from './root.layout';
 
 const router = createBrowserRouter([
   {
-    element: <RootLayout />,
+    element: (
+      <QueryParamProvider adapter={ReactRouter6Adapter}>
+        <RootLayout />
+      </QueryParamProvider>
+    ),
     children: [
       {
         path: '/',

@@ -11,7 +11,7 @@ export const ProductsLayout = ({
   overRole,
 }: ProductsLayoutProps) => (
   <Protected.Redirect minRole={minRole} overRole={overRole} path="/auth/sign-in">
-    <Container size="xl" p="xl">
+    <Container fluid>
       <Center>{children}</Center>
     </Container>
   </Protected.Redirect>

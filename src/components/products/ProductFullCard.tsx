@@ -21,7 +21,7 @@ export const ProductFullCard = ({
     <Flex p={8}>
       <Stack style={{ width: '8rem', flex: '2' }} align="center" justify="center">
         <Image src={image} height="auto" width="auto" />
-        <Text td="underline">{Number.isInteger(price) ? price : price.toFixed(2)}$</Text>{' '}
+        <Text fw="bold">{Number.isInteger(price) ? price : price.toFixed(2)}$</Text>{' '}
         <ProductBadge.Rating rating={rating} />
         <ProductBadge.Source source={status} />
       </Stack>
