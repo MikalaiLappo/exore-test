@@ -16,7 +16,7 @@ export const ProductRatingBadge = ({ rating: { rate, count } }: ProductRatingBad
     <Badge variant="light" radius="xs" color={getReviewColor(rate)}>
       {rate.toFixed(1)}
     </Badge>
-    <Badge variant="light" radius="xs" color="cyan">
+    <Badge variant="light" radius="xs" color={count === 0 ? 'grey' : 'cyan'}>
       {count}
     </Badge>
   </Flex>

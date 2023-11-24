@@ -2,9 +2,10 @@
 import { ProductForm } from '@/components/products/ProductForm';
 import { ProductsLayout } from './products.layout';
 import { Product } from '@/types/products';
+import { useProductCreator } from '@/store/hooks.mjs';
 
 const productStubData: Pick<Product, 'rating' | 'id'> = {
-  rating: { rate: 4.7, count: 538 },
+  rating: { rate: 0, count: 0 },
   id: -1,
 };
 
@@ -24,12 +25,17 @@ const defaultProductData = {
   isDeleted: false,
 } as const;
 
-export const AddProductPage = () => (
-  <ProductsLayout minRole="Admin">
-    <ProductForm
-      product={{ ...defaultProductData, ...productStubData }}
-      onSubmit={(p) => console.log(p)}
-      buttonText="Add Product"
-    />
-  </ProductsLayout>
-);
+export const AddProductPage = () => {
+  const [create, { error, status }] = useProductCreator();
+  return (
+    <ProductsLayout minRole="Admin">
+      <ProductForm
+        status={status}
+        error={error}
+        product={{ ...defaultProductData, ...productStubData }}
+        onSubmit={create}
+        buttonText="Add Product"
+      />
+    </ProductsLayout>
+  );
+};

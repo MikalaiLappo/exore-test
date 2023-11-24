@@ -31,3 +31,4 @@ export type Product = ProductData & {
 };
 export type NewProduct = Omit<Product, 'id' | 'rating'>;
 export type ProductUpdateData = Omit<Product, 'id'>;
+export type ProductCreateData = Omit<ProductData, 'id'> & { status: ProductStatus };

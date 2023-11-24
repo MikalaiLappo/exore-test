@@ -5,8 +5,10 @@ import type { TypedUseSelectorHook } from 'react-redux';
 import { useEffect } from 'react';
 import type { RootState, AppDispatch } from './index';
 import {
+  createProduct,
   deleteProduct,
   fetchProducts,
+  initCreate,
   initDelete,
   initEdit,
   updateProduct,
@@ -20,7 +22,7 @@ import {
   validateToken,
 } from './slices/usersSlice';
 import { NewUserData } from '@/types/users';
-import { ProductId, ProductUpdateData } from '@/types/products';
+import { ProductCreateData, ProductId, ProductUpdateData } from '@/types/products';
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -111,4 +113,18 @@ export const useProductUpdater = (id: ProductId) => {
     dispatch(updateProduct({ id, productData }));
 
   return [update, { error: productEditError, status: productEditStatus }] as const;
+};
+
+export const useProductCreator = () => {
+  const { productCreateStatus, productCreateError } = useAppSelector(
+    (state) => state.productsStore
+  );
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(initCreate());
+  }, []);
+
+  const create = async (productData: ProductCreateData) => dispatch(createProduct(productData));
+
+  return [create, { error: productCreateError, status: productCreateStatus }] as const;
 };

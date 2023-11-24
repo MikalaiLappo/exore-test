@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 import axios from 'axios';
-import { ProductData, ProductId, ProductUpdateData } from '@/types/products.js';
+import { ProductCreateData, ProductData, ProductId, ProductUpdateData } from '@/types/products.js';
 
 axios.defaults.baseURL = 'https://fakestoreapi.com/';
 
@@ -16,12 +16,17 @@ class ProductsService {
 
   static async removeProduct(id: ProductId) {
     const resp = await axios.delete(`products/${id}`);
-    return resp.data;
+    return resp.data as Promise<ProductData>;
   }
 
   static async updateProduct(id: ProductId, productData: ProductUpdateData) {
     const resp = await axios.put(`products/${id}`, productData);
-    return resp.data;
+    return resp.data as Promise<ProductData>;
+  }
+
+  static async createProduct(productData: ProductCreateData) {
+    const resp = await axios.post('products', productData);
+    return resp.data as Promise<ProductData>;
   }
 }
 

@@ -3,7 +3,13 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-param-reassign */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Product, ProductData, ProductId, ProductUpdateData } from '@/types/products.js';
+import {
+  Product,
+  ProductCreateData,
+  ProductData,
+  ProductId,
+  ProductUpdateData,
+} from '@/types/products.js';
 import ProductsService from '@/services/products.service';
 import { ProcessStatus } from '@/types/shared.js';
 
@@ -24,6 +30,14 @@ export const updateProduct = createAsyncThunk<
   const resp = await ProductsService.updateProduct(id, productData);
   return { ...productData, ...resp, id };
 });
+
+export const createProduct = createAsyncThunk<ProductCreateData, ProductCreateData>(
+  'products/createProduct',
+  async (productData) => ({
+    ...productData,
+    ...(await ProductsService.createProduct(productData)),
+  })
+);
 
 type ProductsState = {
   products: Product[];
@@ -59,6 +73,10 @@ export const productsSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {
+    initFetch: (state) => {
+      state.productsFetchError = null;
+      state.productsFetchStatus = 'idle';
+    },
     initDelete: (state) => {
       state.productDeleteError = null;
       state.productDeleteStatus = 'idle';
@@ -66,6 +84,10 @@ export const productsSlice = createSlice({
     initEdit: (state) => {
       state.productEditError = null;
       state.productEditStatus = 'idle';
+    },
+    initCreate: (state) => {
+      state.productCreateError = null;
+      state.productCreateStatus = 'idle';
     },
   },
   extraReducers: (builder) => {
@@ -103,7 +125,7 @@ export const productsSlice = createSlice({
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.productsFetchStatus = 'failed';
-        state.productsFetchError = action.error.message ?? 'Unknown fetch error';
+        state.productsFetchError = action.error.message ?? 'Unknown fetchProducts error';
       })
       .addCase(deleteProduct.fulfilled, (state, action) => {
         const theProduct = state.products.find((p) => p.id === action.payload);
@@ -129,7 +151,7 @@ export const productsSlice = createSlice({
       })
       .addCase(deleteProduct.rejected, (state, action) => {
         state.productDeleteStatus = 'failed';
-        state.productDeleteError = action.error.message ?? 'Unknown delete error';
+        state.productDeleteError = action.error.message ?? 'Unknown deleteProduct error';
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
         const theProduct = state.products.find((p) => p.id === action.payload.id);
@@ -152,11 +174,38 @@ export const productsSlice = createSlice({
       })
       .addCase(updateProduct.rejected, (state, action) => {
         state.productEditStatus = 'failed';
-        state.productEditError = action.error.message ?? 'Unknown delete error';
+        state.productEditError = action.error.message ?? 'Unknown updateProduct error';
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        const nextId =
+          1 +
+          Math.max(...state.products.filter((p) => p.source === 'Local').map((p) => p.id), 90000);
+
+        const now = Date.now();
+        const newProduct: Product = {
+          ...action.payload,
+          id: nextId,
+          isDeleted: false,
+          source: 'Local',
+          updatedAt: now,
+          createdAt: now,
+        };
+        state.products.push(newProduct);
+
+        state.productCreateStatus = 'succeeded';
+        state.productCreateError = null;
+      })
+      .addCase(createProduct.pending, (state) => {
+        state.productCreateStatus = 'pending';
+        state.productCreateError = null;
+      })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.productCreateError = action.error.message ?? 'Unknown createProduct error';
+        state.productCreateStatus = 'failed';
       });
   },
 });
 
-export const { initEdit, initDelete } = productsSlice.actions;
+export const { initEdit, initDelete, initCreate, initFetch } = productsSlice.actions;
 
 export default productsSlice.reducer;
