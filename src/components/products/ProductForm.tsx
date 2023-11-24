@@ -9,12 +9,14 @@ import {
   Button,
   Center,
   Container,
+  SegmentedControl,
+  Group,
 } from '@mantine/core';
 import { z } from 'zod';
 import { useForm, zodResolver } from '@mantine/form';
 import { ProductFullCard } from './ProductFullCard';
 import { ProductCard } from './ProductCard';
-import { NewProduct, Product } from '@/types/products';
+import { Product, ProductStatus } from '@/types/products';
 
 const newProductValidator = z.object({
   title: z.string().min(2, { message: 'Name should have at least 2 letters' }),
@@ -23,43 +25,23 @@ const newProductValidator = z.object({
   category: z.string().min(6),
   image: z.string().url(),
 });
-
-const productStubData: Pick<Product, 'rating' | 'id'> = {
-  rating: { rate: 4.7, count: 538 },
-  id: -1,
-};
-
-const now = Date.now();
-
-const defaultProductData = {
-  title: 'Mens Casual Premium Slim Fit T-Shirts ',
-  price: 22.3,
-  description:
-    'Slim-fitting style, contrast raglan long sleeve, three-button henley placket, light weight & soft fabric for breathable and comfortable wearing. And Solid stitched shirts with round neck made for durability and a great fit for casual fashion wear and diehard baseball fans. The Henley style round neckline includes a three-button placket.',
-  category: "men's clothing",
-  image: 'https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg',
-  source: 'Local',
-  status: 'Draft',
-  createdAt: now,
-  updatedAt: now,
-  isDeleted: false,
-} as const;
-
 type ProductFormProps = {
-  onSubmit: (p: NewProduct) => void;
+  product: Product;
+  onSubmit: (p: Product) => void;
   buttonText: string;
 };
 
-export const ProductForm = ({ buttonText, onSubmit }: ProductFormProps) => {
-  const form = useForm<NewProduct>({
+export const ProductForm = ({ buttonText, onSubmit, product }: ProductFormProps) => {
+  const form = useForm<Product>({
     validate: zodResolver(newProductValidator),
-    initialValues: defaultProductData,
+    initialValues: product,
   });
 
   // Edge-case for complete uncrolled input deletion
   const safePrice: number = form.getInputProps('price').value || 0;
-  const previewData = { ...form.values, ...productStubData, ...{ price: safePrice } };
+  const previewData = { ...product, ...form.values, ...{ price: safePrice } };
 
+  console.log(previewData);
   return (
     <Container size="xl" pt={32}>
       <Stack>
@@ -101,6 +83,18 @@ export const ProductForm = ({ buttonText, onSubmit }: ProductFormProps) => {
                 mt="md"
                 {...form.getInputProps('category')}
               />
+              <SegmentedControl
+                fullWidth
+                my={8}
+                data={
+                  [
+                    { value: 'Draft', label: 'Draft' },
+                    { value: 'Live', label: 'Live' },
+                  ] as { value: ProductStatus; label: ProductStatus }[]
+                }
+                value={form.getInputProps('status').value as ProductStatus}
+                onChange={(val) => form.setFieldValue('status', val as ProductStatus)}
+              />
               <Button
                 variant="gradient"
                 gradient={{ from: 'green', to: 'blue' }}
@@ -111,7 +105,9 @@ export const ProductForm = ({ buttonText, onSubmit }: ProductFormProps) => {
               </Button>
             </form>
           </Card>
-          <ProductCard product={previewData} />
+          <Group>
+            <ProductCard product={previewData} />
+          </Group>
         </Flex>
         <Center>
           <ProductFullCard product={previewData} />

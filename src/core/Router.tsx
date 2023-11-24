@@ -8,6 +8,7 @@ import { AddProductPage } from '@/pages/products/AddProduct.page';
 import { SignUpPage } from '@/pages/auth/SignUp.page';
 import { SignInPage } from '@/pages/auth/SignIn.page';
 import { RootLayout } from './root.layout';
+import { EditProductPage } from '@/pages/products/EditProduct.page';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
           {
             path: 'add',
             Component: AddProductPage,
+          },
+          {
+            path: 'edit/:productId',
+            Component: EditProductPage,
           },
         ],
       },
