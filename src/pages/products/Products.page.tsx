@@ -16,12 +16,10 @@ import { ProductStatus } from '@/types/products';
 import { Protected } from '@/core/Protected';
 
 export const ProductsPage = () => {
-  const [products] = useProductsRetriever();
+  const [products, loadAPIProducts] = useProductsRetriever();
   const { user } = useSession();
 
-  /**
-   * Delete Modal State
-   */
+  // Delete Modal State
   const [deletingId, setDeletingId] = useState<number | null>(null);
   // Delete Modal State end
 
@@ -120,6 +118,14 @@ export const ProductsPage = () => {
               status={filtStatus}
               setStatus={setFiltStatus}
             />
+            <Flex justify="center" gap={16}>
+              {[8, 16, 20].map((n) => (
+                <Button key={n} variant="outline" onClick={() => loadAPIProducts(n)}>
+                  {n}
+                </Button>
+              ))}
+            </Flex>
+
             <Protected.Fragment minRole="Admin">
               <Center pt={40}>
                 <Anchor href="/products/add">

@@ -33,7 +33,7 @@ export const useSession = () => {
   useEffect(() => {
     if (!token) return;
     dispatch(validateToken());
-  }, [token]);
+  }, []);
   if (token === null) return { user: null };
   const thisSession = sessions[token];
   if (!thisSession) return { user: null };
@@ -75,13 +75,13 @@ export const useProductsRetriever = () => {
   const { products } = useAppSelector((state) => state.productsStore);
   const dispatch = useAppDispatch();
 
-  const loadAPIProducts = async (n?: number) => {
-    /// if (n === undefined && products.length) return;
-    dispatch(fetchProducts(n ?? 8));
+  const loadAPIProducts = async (n: number = 8) => {
+    // API limited to 20 products. Remove redundant calls
+    if (products.filter((p) => p.source === 'API').length >= n) return;
+    dispatch(fetchProducts(n));
   };
 
   useEffect(() => {
-    // if (products.length) return;
     loadAPIProducts();
   }, []);
 

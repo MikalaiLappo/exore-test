@@ -35,7 +35,7 @@ export const SignUpPage = () => {
 
   return (
     <AuthLayout>
-      <Card style={{ maxWidth: '32rem' }} w="100%">
+      <Card style={{ maxWidth: '32rem' }} pb={36} w="100%">
         <form onSubmit={form.onSubmit((values) => trySignUp(values))}>
           <Stack>
             <TextInput
