@@ -33,7 +33,7 @@ const ProtectedFragment = ({ children, minRole }: ProtectedFragmentProps) => {
   const { user } = useSession();
   if (user === null) return null;
   if (roleValues[user.role] < roleValues[minRole]) return null;
-  return { children };
+  return <>{children}</>;
 };
 
 type ProtectedRoleFragmentProps = { Guest?: ReactNode } & {
