@@ -81,7 +81,7 @@ const initialState: UsersState = {
   sessions: {},
   token: null,
   /* In real world app I'd probably handle it with some react-query lib, beside Redux
-    It's only a mock-stub-ish workaround since, there is no API, and adding stuff like Auth0 is too much
+    It's only a mock-stub-ish workaround since there is no API, and adding stuff like Auth0 is too much
   */
   signUpStatus: 'idle',
   signUpError: null,

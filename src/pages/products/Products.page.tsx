@@ -12,20 +12,16 @@ import { useProductsRetriever, useSession } from '@/store/hooks.mjs';
 import { ProductAdminCard, ProductCard } from '@/components/products/ProductCard';
 import { ProductsLayout } from './products.layout';
 import { ProductFilters } from '@/components/products/ProductFilters';
-import { ProductId } from '@/types/products';
 
 export const ProductsPage = () => {
   const [products] = useProductsRetriever();
   const { user } = useSession();
 
   /**
-   * Delete logic
+   * Delete Modal State
    */
   const [deletingId, setDeletingId] = useState<number | null>(null);
-  const onProductDelete = (id: ProductId) => {
-    console.log(id);
-  };
-  // Delete logic end
+  // Delete Modal State end
 
   /**
    * Filters
@@ -69,7 +65,6 @@ export const ProductsPage = () => {
           deletingId={deletingId}
           openDeleteModal={setDeletingId}
           cancelDeleteModal={() => setDeletingId(null)}
-          onDelete={onProductDelete}
           searchText={filtText}
           key={p.id}
           product={p}

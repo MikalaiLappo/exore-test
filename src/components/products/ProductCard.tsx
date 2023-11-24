@@ -17,6 +17,7 @@ import { ReactNode } from 'react';
 import type { Product, ProductId } from '@/types/products';
 import { ProductBadge } from './atoms/ProductBadge';
 import { Protected } from '@/core/Protected';
+import { useProductRemover } from '@/store/hooks.mjs';
 
 type ProductCardProps = { product: Product; searchText?: string; children?: ReactNode };
 
@@ -69,37 +70,52 @@ type ProductAdminCardProps = Omit<ProductCardProps, 'children'> & {
   deletingId: ProductId | null;
   openDeleteModal: (id: ProductId) => void;
   cancelDeleteModal: () => void;
-  onDelete: (id: ProductId) => void;
 };
-export const ProductAdminCard = (props: ProductAdminCardProps) => (
-  <ProductCard {...props}>
-    <Protected.Fragment minRole="Admin">
-      <Group justify="space-between">
-        <Anchor href={`/products/edit/${props.product.id}`} underline="never">
-          <Button variant="outline" color="lime">
-            Edit
+export const ProductAdminCard = (props: ProductAdminCardProps) => {
+  const [remove, { error, status }] = useProductRemover(props.product.id);
+
+  return (
+    <ProductCard {...props}>
+      <Protected.Fragment minRole="Admin">
+        <Group justify="space-between">
+          <Anchor href={`/products/edit/${props.product.id}`} underline="never">
+            <Button variant="outline" color="lime">
+              Edit
+            </Button>
+          </Anchor>
+          <Button
+            onClick={() => props.openDeleteModal(props.product.id)}
+            variant="outline"
+            color="red"
+          >
+            Delete
           </Button>
-        </Anchor>
-        <Button
-          onClick={() => props.openDeleteModal(props.product.id)}
-          variant="outline"
-          color="red"
-        >
-          Delete
-        </Button>
-      </Group>
-      <Modal onClose={props.cancelDeleteModal} opened={props.deletingId === props.product.id}>
-        <Center pb={16}>
-          <Stack>
-            <ProductCard {...props} />
-            <Center>
-              <Button variant="filled" my={16} color="red" fullWidth>
-                Delete
-              </Button>
-            </Center>
-          </Stack>
-        </Center>
-      </Modal>
-    </Protected.Fragment>
-  </ProductCard>
-);
+        </Group>
+        <Modal onClose={props.cancelDeleteModal} opened={props.deletingId === props.product.id}>
+          <Center pb={16}>
+            <Stack>
+              <ProductCard {...props} />
+              <Center>
+                <Button
+                  onClick={remove}
+                  disabled={status === 'pending'}
+                  variant="filled"
+                  my={16}
+                  color="red"
+                  fullWidth
+                >
+                  Delete
+                </Button>
+                {error && (
+                  <Text c="red" fw="bold">
+                    {error}
+                  </Text>
+                )}
+              </Center>
+            </Stack>
+          </Center>
+        </Modal>
+      </Protected.Fragment>
+    </ProductCard>
+  );
+};

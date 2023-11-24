@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useEffect } from 'react';
 import type { RootState, AppDispatch } from './index';
-import { fetchProducts } from './slices/productsSlice';
+import { deleteProduct, fetchProducts, initDelete } from './slices/productsSlice';
 import {
   initSignIn,
   initSignUp,
@@ -14,6 +14,7 @@ import {
   validateToken,
 } from './slices/usersSlice';
 import { NewUserData } from '@/types/users';
+import { ProductId } from '@/types/products';
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -76,5 +77,19 @@ export const useProductsRetriever = () => {
     loadAPIProducts();
   }, []);
 
-  return [products, loadAPIProducts] as const;
+  return [products.filter((p) => !p.isDeleted), loadAPIProducts] as const;
+};
+
+export const useProductRemover = (id: ProductId) => {
+  const { productDeleteError, productDeleteStatus } = useAppSelector(
+    (state) => state.productsStore
+  );
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(initDelete());
+  }, []);
+
+  const remove = async () => dispatch(deleteProduct(id));
+
+  return [remove, { error: productDeleteError, status: productDeleteStatus }] as const;
 };
