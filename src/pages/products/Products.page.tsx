@@ -1,5 +1,5 @@
 /* eslint-disable import/extensions */
-import { Flex, Text, rem, Container, Group } from '@mantine/core';
+import { Flex, Text, rem, Container, Group, Anchor, Button, Center } from '@mantine/core';
 import {
   DelimitedArrayParam,
   NumberParam,
@@ -12,6 +12,8 @@ import { useProductsRetriever, useSession } from '@/store/hooks.mjs';
 import { ProductAdminCard, ProductCard } from '@/components/products/ProductCard';
 import { ProductsLayout } from './products.layout';
 import { ProductFilters } from '@/components/products/ProductFilters';
+import { ProductStatus } from '@/types/products';
+import { Protected } from '@/core/Protected';
 
 export const ProductsPage = () => {
   const [products] = useProductsRetriever();
@@ -26,7 +28,14 @@ export const ProductsPage = () => {
   /**
    * Filters
    */
-  const allCategories = [...new Set(products.map((p) => p.category))];
+
+  const [filtStatusRaw, setFiltStatus] = useQueryParam('status', withDefault(StringParam, ''));
+  const filtStatus: ProductStatus =
+    user?.role !== 'Admin' ? 'Live' : filtStatusRaw === 'Draft' ? 'Draft' : 'Live';
+
+  const allCategories = [
+    ...new Set(products.filter((p) => p.status === filtStatus).map((p) => p.category)),
+  ];
 
   const [filtText, setFiltText] = useQueryParam('text', withDefault(StringParam, ''));
   const [filtCategories, setFiltCategories] = useQueryParam(
@@ -51,6 +60,7 @@ export const ProductsPage = () => {
   const filteredProducts = products
     .filter(
       (p) =>
+        p.status === filtStatus &&
         p.rating.count >= filtMinReviews &&
         p.rating.rate >= +filtMinRating &&
         filtCategories.includes(p.category) &&
@@ -73,6 +83,7 @@ export const ProductsPage = () => {
         <ProductCard searchText={filtText} key={p.id} product={p} />
       )
     );
+  ///// Filters end
 
   return (
     <ProductsLayout>
@@ -106,7 +117,18 @@ export const ProductsPage = () => {
               setMinRating={setFiltMinRating}
               minReviews={filtMinReviews}
               setMinReviews={setFiltMinReviews}
+              status={filtStatus}
+              setStatus={setFiltStatus}
             />
+            <Protected.Fragment minRole="Admin">
+              <Center pt={40}>
+                <Anchor href="/products/add">
+                  <Button type="button" variant="outline" color="lime">
+                    Add Product
+                  </Button>
+                </Anchor>
+              </Center>
+            </Protected.Fragment>
           </Container>
         </Flex>
       </Flex>

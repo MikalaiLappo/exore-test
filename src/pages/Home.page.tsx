@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 import { Title, Text, Stack, Group, Anchor, Container, rem, Divider } from '@mantine/core';
-import { useProductsRetriever } from '@/store/hooks.mjs';
+import { useAppSelector, useProductsRetriever } from '@/store/hooks.mjs';
 import { CategoryButton } from '@/components/products/atoms/CategoryButton';
 import { Protected } from '@/core/Protected';
 
@@ -15,7 +15,8 @@ const Welcome = () => (
 
 const Stats = () => {
   const [products] = useProductsRetriever();
-  const categories = [...new Set(products.map((p) => p.category))];
+  const ps = products.filter((p) => !p.isDeleted && p.status === 'Live');
+  const categories = [...new Set(ps.map((p) => p.category))];
   return (
     <Stack mt={40}>
       <Text>Public Stats</Text>
@@ -24,17 +25,14 @@ const Stats = () => {
         <Anchor fz={28} href="/products">
           products
         </Anchor>
-        :{' '}
-        <span style={{ color: 'darkcyan' }}>
-          {products.filter((p) => p.status === 'Live').length}
-        </span>
+        : <span style={{ color: 'darkcyan' }}>{ps.filter((p) => p.status === 'Live').length}</span>
       </Text>
       <Text fz={28}>
         In <span style={{ color: 'orange' }}>{categories.length}</span> categories:{' '}
       </Text>
       <Group>
         {categories.map((c, i) => (
-          <CategoryButton key={c + i} category={c} />
+          <CategoryButton isLink key={c + i} category={c} />
         ))}
       </Group>
     </Stack>
@@ -42,8 +40,9 @@ const Stats = () => {
 };
 
 const AdminStats = () => {
-  const [products] = useProductsRetriever();
-  const draftProducts = products.filter((p) => p.status === 'Draft');
+  const { products } = useAppSelector((state) => state.productsStore);
+  const draftProducts = products.filter((p) => !p.isDeleted && p.status === 'Draft');
+  const softDeleted = products.filter((p) => p.isDeleted);
 
   return (
     <Stack>
@@ -51,15 +50,18 @@ const AdminStats = () => {
         Admin Stats
       </Text>
       <Group>
-        <Anchor fz={28}>Draft</Anchor>
+        <Anchor href="products?status=Draft" fz={28}>
+          Draft
+        </Anchor>
         <Text fz={28}> products: {draftProducts.length.toString()}</Text>
       </Group>
+      <Text fz={28}> Soft deleted count (API): {softDeleted.length.toString()}</Text>
     </Stack>
   );
 };
 
 export const HomePage = () => (
-  <Container size="md" pt={rem(40)}>
+  <Container size="md" p={rem(40)}>
     <Stack justify="center">
       <Welcome />
       <Protected.RoleFragment

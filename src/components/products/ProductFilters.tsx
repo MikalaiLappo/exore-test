@@ -1,6 +1,18 @@
-import { Button, Container, Group, NumberInput, Stack, TextInput, Text } from '@mantine/core';
-
+/* eslint-disable import/extensions */
 import { IconCurrencyDollar } from '@tabler/icons-react';
+import {
+  Button,
+  Container,
+  Group,
+  NumberInput,
+  Stack,
+  TextInput,
+  Text,
+  SegmentedControl,
+  Flex,
+} from '@mantine/core';
+import { Protected } from '@/core/Protected';
+import { ProductStatus } from '@/types/products';
 
 type ProductFiltersProps = {
   allCategories: string[];
@@ -16,6 +28,8 @@ type ProductFiltersProps = {
   setMinRating: (s: string) => void;
   minReviews: number;
   setMinReviews: (mr: number) => void;
+  status: ProductStatus;
+  setStatus: (ps: ProductStatus) => void;
 };
 export const ProductFilters = ({
   allCategories,
@@ -31,9 +45,26 @@ export const ProductFilters = ({
   setMinRating,
   minReviews,
   setMinReviews,
+  status,
+  setStatus,
 }: ProductFiltersProps) => (
   <Container maw={480} py={36}>
     <Stack>
+      <Protected.Fragment minRole="Admin">
+        <Flex>
+          <SegmentedControl
+            fullWidth
+            data={
+              [
+                { label: 'Live', value: 'Live' },
+                { label: 'Draft', value: 'Draft' },
+              ] as { label: ProductStatus; value: ProductStatus }[]
+            }
+            value={status}
+            onChange={(v) => setStatus(v as ProductStatus)}
+          />
+        </Flex>
+      </Protected.Fragment>
       <TextInput
         label="Text search"
         placeholder="Product name or description"
@@ -105,7 +136,11 @@ export const ProductFilters = ({
             {c}
           </Button>
         ))}
-        {!categories.length ? (
+        {!allCategories.length ? (
+          <Text c="orange" fw="bold">
+            There is 0 {status} products
+          </Text>
+        ) : !categories.length ? (
           <Text c="red" fw="bold">
             {' '}
             Select at least some Category

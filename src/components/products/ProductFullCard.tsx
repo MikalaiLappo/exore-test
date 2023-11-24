@@ -31,7 +31,7 @@ export const ProductFullCard = ({
           <Text fw="bold">{title}</Text>
         </Anchor>
         <Text ta="center">{description}</Text>
-        <CategoryButton category={category} />
+        <CategoryButton isLink category={category} />
       </Stack>
     </Flex>
   </Card>
