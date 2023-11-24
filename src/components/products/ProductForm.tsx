@@ -13,7 +13,7 @@ import {
 import { z } from 'zod';
 import { useForm, zodResolver } from '@mantine/form';
 import { ProductFullCard } from './ProductFullCard';
-import { ProductListCard } from './ProductListCard';
+import { ProductCard } from './ProductCard';
 import { NewProduct, Product } from '@/types/products';
 
 const newProductValidator = z.object({
@@ -111,7 +111,7 @@ export const ProductForm = ({ buttonText, onSubmit }: ProductFormProps) => {
               </Button>
             </form>
           </Card>
-          <ProductListCard product={previewData} />
+          <ProductCard product={previewData} />
         </Flex>
         <Center>
           <ProductFullCard product={previewData} />

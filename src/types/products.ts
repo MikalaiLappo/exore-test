@@ -2,7 +2,7 @@
  * Product Data from API
  */
 export type ProductData = {
-  id: number;
+  id: ProductId;
   title: string;
   price: number;
   description: string;
@@ -10,6 +10,7 @@ export type ProductData = {
   image: string;
   rating: ProductRating;
 };
+export type ProductId = number;
 
 export type ProductRating = {
   rate: number;
