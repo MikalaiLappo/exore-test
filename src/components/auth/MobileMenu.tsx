@@ -21,21 +21,19 @@ const GuestMenu = () => (
       </Button>
     </Menu.Target>
 
-    <Menu.Dropdown>
-      <Menu.Label>Account</Menu.Label>
+    <Menu.Label>Account</Menu.Label>
 
-      <Anchor underline="never" href="/auth/sign-in">
-        <Menu.Item leftSection={<IconLogin style={{ width: rem(20), height: rem(20) }} />}>
-          Sign In
-        </Menu.Item>
-      </Anchor>
+    <Anchor underline="never" href="/auth/sign-in">
+      <Menu.Item leftSection={<IconLogin style={{ width: rem(20), height: rem(20) }} />}>
+        Sign In
+      </Menu.Item>
+    </Anchor>
 
-      <Anchor underline="never" href="/auth/sign-up">
-        <Menu.Item rightSection={<IconUser style={{ width: rem(20), height: rem(20) }} />}>
-          Sign Up
-        </Menu.Item>
-      </Anchor>
-    </Menu.Dropdown>
+    <Anchor underline="never" href="/auth/sign-up">
+      <Menu.Item rightSection={<IconUser style={{ width: rem(20), height: rem(20) }} />}>
+        Sign Up
+      </Menu.Item>
+    </Anchor>
   </Menu>
 );
 
@@ -50,30 +48,28 @@ const CustomerMenu = ({ user, children }: { user: User; children?: ReactNode }) 
         </Button>
       </Menu.Target>
 
-      <Menu.Dropdown>
-        <Menu.Label>Market</Menu.Label>
-        <Anchor underline="never" href="/">
-          <Menu.Item leftSection={<IconHome style={{ width: rem(20), height: rem(20) }} />}>
-            Home
-          </Menu.Item>
-        </Anchor>
-        <Anchor underline="never" href="/products">
-          <Menu.Item leftSection={<IconShoppingBag style={{ width: rem(20), height: rem(20) }} />}>
-            Products
-          </Menu.Item>
-        </Anchor>
-
-        {children}
-
-        <Menu.Divider />
-        <Menu.Label>Account</Menu.Label>
-        <Menu.Item
-          rightSection={<IconLogout style={{ width: rem(20), height: rem(20) }} />}
-          onClick={() => logOut()}
-        >
-          Logout
+      <Menu.Label>Market</Menu.Label>
+      <Anchor underline="never" href="/">
+        <Menu.Item leftSection={<IconHome style={{ width: rem(20), height: rem(20) }} />}>
+          Home
         </Menu.Item>
-      </Menu.Dropdown>
+      </Anchor>
+      <Anchor underline="never" href="/products">
+        <Menu.Item leftSection={<IconShoppingBag style={{ width: rem(20), height: rem(20) }} />}>
+          Products
+        </Menu.Item>
+      </Anchor>
+
+      {children}
+
+      <Menu.Divider />
+      <Menu.Label>Account</Menu.Label>
+      <Menu.Item
+        rightSection={<IconLogout style={{ width: rem(20), height: rem(20) }} />}
+        onClick={() => logOut()}
+      >
+        Logout
+      </Menu.Item>
     </Menu>
   );
 };
@@ -108,7 +104,7 @@ const roleMenus: {
   };
 */
 
-export const AccountMenu = () => {
+export const MobileMenu = () => {
   const { user } = useSession();
   if (user === null) {
     return <GuestMenu />;

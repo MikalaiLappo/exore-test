@@ -7,6 +7,7 @@ import { Outlet } from 'react-router-dom';
 import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
 import styles from './rootLayout.module.css';
 import { AccountMenu } from '@/components/auth/AccountMenu';
+import { MobileMenu } from '@/components/auth/MobileMenu';
 
 const MobileHeaderContent = ({
   opened,
@@ -43,7 +44,9 @@ const RootLayout = () => {
       <AppShell.Header className={styles.header}>
         <MobileHeaderContent opened={opened} toggle={toggle} />
         <DesktopHeaderContent />
-        <AppShell.Navbar className={styles.header__navbar}>Navbar</AppShell.Navbar>
+        <AppShell.Navbar className={styles.header__navbar}>
+          <MobileMenu />
+        </AppShell.Navbar>
       </AppShell.Header>
 
       <AppShell.Main h="100%">

@@ -137,14 +137,17 @@ export const ProductFilters = ({
           </Button>
         ))}
         {!allCategories.length ? (
-          <Text c="orange" fw="bold">
-            There is 0 {status} products
-          </Text>
+          <Group>
+            <Text c="orange" fw="bold">
+              There is 0 {status} products
+            </Text>
+          </Group>
         ) : !categories.length ? (
-          <Text c="red" fw="bold">
-            {' '}
-            Select at least some Category
-          </Text>
+          <Group>
+            <Text c="red" fw="bold">
+              Select at least some Category
+            </Text>
+          </Group>
         ) : null}
       </Group>
     </Stack>
